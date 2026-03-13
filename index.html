@@ -209,6 +209,39 @@
   .dy-comment-like svg { width: 14px; height: 14px; fill: #ccc; }
   .dy-comment-like.liked svg { fill: #fe2c55; }
 
+  .sim-input-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; background: #f7f7f8; flex-shrink: 0;
+    border-top: 1px solid #e5e5ea;
+  }
+  .sim-input-box {
+    flex: 1; display: flex; align-items: center;
+    background: #fff; border-radius: 20px; padding: 7px 14px;
+    min-height: 20px; font-size: 15px; color: #1a1a1a;
+    border: 1px solid #e5e7eb; line-height: 1.4;
+    transition: border-color .2s;
+  }
+  .sim-input-box.highlight {
+    border-color: #a78bfa;
+    animation: inputFlash .5s ease;
+  }
+  @keyframes inputFlash {
+    0%,100% { box-shadow: none; }
+    50% { box-shadow: 0 0 0 3px rgba(124,58,237,.15); }
+  }
+  .sim-input-box .sim-cursor {
+    display: inline-block; width: 2px; height: 16px;
+    background: #7c3aed; animation: blink 1s infinite;
+    vertical-align: middle; margin-left: 1px; flex-shrink: 0;
+  }
+  .sim-input-box .sim-placeholder { color: #b0b3ba; }
+  .sim-input-send {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #07c160; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; border: none; cursor: pointer;
+  }
+  .sim-input-send svg { width: 16px; height: 16px; fill: #fff; }
+
   .keyboard-wrap { flex-shrink: 0; background: #d1d3d9; position: relative; }
 
   /* ===== Toolbar (paged) ===== */
@@ -216,6 +249,7 @@
     position: relative;
     overflow: hidden;
     background: #ecedf1;
+    user-select: none; -webkit-user-select: none;
     touch-action: pan-y;
     max-height: 120px;
   }
@@ -370,6 +404,7 @@
   .ct-toolbar {
     position: relative;
     overflow: hidden;
+    user-select: none; -webkit-user-select: none;
     background: #ecedf1;
     flex-shrink: 0;
     touch-action: pan-y;
@@ -381,12 +416,20 @@
     animation: chipIn .25s ease;
     transition: transform .2s ease;
   }
-  .ct-wrap.dragging {
-    opacity: .6; transform: scale(1.1);
-    z-index: 100; animation: none;
+  .ct-drag-flat {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 7px; padding: 6px 10px;
+    min-height: 44px;
   }
-  .ct-wrap.drag-over-left { transform: translateX(8px); }
-  .ct-wrap.drag-over-right { transform: translateX(-8px); }
+  .ct-drag-flat .ct-wrap .ct-remove,
+  .ct-drag-flat .ct-wrap .ct-size-toggle { display: none; }
+  .ct-wrap.dragging {
+    opacity: .5; transform: scale(1.08);
+    z-index: 100; animation: none;
+    box-shadow: 0 4px 16px rgba(124,58,237,.25);
+    outline: 2px solid rgba(124,58,237,.4);
+    border-radius: 10px;
+  }
   .ct-wrap .ct-remove {
     width: 16px; height: 16px; border-radius: 50%; background: #ef4444;
     display: flex; align-items: center; justify-content: center;
@@ -484,15 +527,16 @@
   .grid-item:nth-child(8) { animation-delay: .16s; }
   .grid-item:nth-child(9) { animation-delay: .18s; }
 
-  /* ===== Ask AI: Input Bar (replaces toolbar, with transition) ===== */
+  /* ===== Ask AI: Input Bar (overlay inside toolbar, no height change) ===== */
   .ask-input-bar {
+    position: absolute; inset: 0; z-index: 10;
     display: flex; align-items: center; gap: 8px;
     padding: 6px 10px; background: #ecedf1;
-    overflow: hidden;
-    max-height: 0; opacity: 0;
-    transition: max-height .3s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+    box-sizing: border-box;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s cubic-bezier(.4,0,.2,1);
   }
-  .ask-input-bar.active { max-height: 56px; opacity: 1; }
+  .ask-input-bar.active { opacity: 1; pointer-events: auto; }
   .ask-input-bar .ask-back {
     width: 30px; height: 30px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -572,7 +616,8 @@
 
   .ask-ref { font-size: 12px; color: #9ca3af; padding: 2px 0; }
 
-  .ask-answer { font-size: 14px; color: #1a1a1a; line-height: 1.7; }
+  .ask-answer { font-size: 14px; color: #1a1a1a; line-height: 1.7; cursor: pointer; border-radius: 10px; transition: background .15s; }
+  .ask-answer:active { background: rgba(124,58,237,.06); }
   .ask-answer h4 { font-size: 14px; font-weight: 700; margin: 10px 0 3px; color: #1a1a1a; }
   .ask-answer h4:first-child { margin-top: 0; }
   .ask-answer ul { padding-left: 6px; list-style: none; }
@@ -618,18 +663,18 @@
   }
   .ask-followup-bar .ask-fu-send svg { width: 14px; height: 14px; fill: #fff; }
 
-  /* ===== Ask AI: Voice Recording (inline in toolbar area) ===== */
+  /* ===== Ask AI: Voice Recording (overlay inside toolbar) ===== */
   .ask-voice-bar {
+    position: absolute; inset: 0; z-index: 11;
     display: flex; align-items: center; gap: 0;
     padding: 0 10px;
     background: linear-gradient(135deg, #3b1d8e, #6d28d9);
-    overflow: hidden;
-    max-height: 0; opacity: 0;
-    transition: max-height .25s cubic-bezier(.4,0,.2,1), opacity .2s ease;
-    height: 52px; box-sizing: border-box;
+    box-sizing: border-box;
     border-radius: 0;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s cubic-bezier(.4,0,.2,1);
   }
-  .ask-voice-bar.active { max-height: 52px; opacity: 1; }
+  .ask-voice-bar.active { opacity: 1; pointer-events: auto; }
 
   .voice-ai-icon {
     width: 32px; height: 32px; flex-shrink: 0;
@@ -896,6 +941,49 @@
     box-shadow: 0 0 0 2px rgba(124,58,237,.3), 0 1px 0 #b0aecf;
   }
 
+  /* ===== Reminder Bubble (inside toolbar) ===== */
+  .tb-reminder {
+    display: flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; overflow: hidden;
+    transition: max-width .4s cubic-bezier(.4,0,.2,1), opacity .3s ease .05s;
+    flex-shrink: 0;
+  }
+  .tb-reminder.active { max-width: 360px; opacity: 1; }
+  .tb-reminder-inner {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff; border-radius: 18px; height: 34px;
+    box-shadow: 0 1px 4px rgba(124,58,237,.12);
+    padding: 0 6px 0 10px; white-space: nowrap;
+  }
+  .tb-reminder-label {
+    font-size: 11px; font-weight: 700; padding: 2px 7px;
+    border-radius: 4px; flex-shrink: 0;
+  }
+  .tb-reminder-label.added { background: #dcfce7; color: #16a34a; }
+  .tb-reminder-label.notify { background: #fef3c7; color: #d97706; }
+  .tb-reminder-text {
+    font-size: 13px; color: #1a1a1a; font-weight: 500;
+  }
+  .tb-reminder-close {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: none; border: none; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tb-reminder-close svg { width: 10px; height: 10px; fill: #9ca3af; }
+  .tb-reminder-actions {
+    display: flex; align-items: center; gap: 4px; flex-shrink: 0; padding-left: 2px;
+  }
+  .tb-reminder-act {
+    width: 26px; height: 26px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; border: none; cursor: pointer;
+  }
+  .tb-reminder-act.cal { background: #22c55e; }
+  .tb-reminder-act.cal svg { width: 14px; height: 14px; fill: #fff; }
+  .tb-reminder-act.more { background: #e5e7eb; }
+  .tb-reminder-act.more svg { width: 14px; height: 14px; fill: #6b7280; }
+
   /* ===== Tips Panel ===== */
   .tips-panel {
     width: 260px; flex-shrink: 0; align-self: flex-start;
@@ -949,6 +1037,11 @@
     <button class="scene-tag" data-scene="ai_agents">推荐智能体</button>
     <button class="scene-tag" data-scene="ai_gen">直接生成</button>
   </div>
+  <div class="scene-sidebar-group">
+    <div class="scene-group-title">智能提醒</div>
+    <button class="scene-tag" data-scene="reminder_add">添加日程</button>
+    <button class="scene-tag" data-scene="reminder_notify">日程提醒</button>
+  </div>
 </div>
 
 <div class="phone-frame">
@@ -968,28 +1061,34 @@
 
   <div class="chat-area" id="chatArea"></div>
 
+  <div class="sim-input-bar" id="simInputBar">
+    <div class="sim-input-box" id="simInputBox"><span class="sim-placeholder">输入消息...</span><span class="sim-cursor"></span></div>
+    <button class="sim-input-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  </div>
+
   <div class="keyboard-wrap">
     <div class="ai-gen-card" id="aiGenCard"></div>
-    <div class="toolbar" id="toolbar"></div>
+    <div class="toolbar" id="toolbar">
+      <div class="ask-input-bar" id="askInputBar">
+        <button class="ask-back" id="askBack"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        <div class="ask-field-wrap">
+          <input class="ask-field" id="askField" type="text" placeholder="输入你的问题…" autocomplete="off">
+          <button class="ask-send disabled" id="askSend"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+        </div>
+      </div>
+      <div class="ask-voice-bar" id="askVoiceBar">
+        <div class="voice-ai-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 5.2L8 14 2 9.2h7.6z"/></svg>
+        </div>
+        <div class="voice-text-area">
+          <span class="voice-transcribing">发送我的个人介绍<span class="voice-cursor"></span></span>
+        </div>
+        <div class="voice-wave">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
     <div class="candidate-bar" id="candidateBar"></div>
-    <div class="ask-input-bar" id="askInputBar">
-      <button class="ask-back" id="askBack"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
-      <div class="ask-field-wrap">
-        <input class="ask-field" id="askField" type="text" placeholder="输入你的问题…" autocomplete="off">
-        <button class="ask-send disabled" id="askSend"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
-      </div>
-    </div>
-    <div class="ask-voice-bar" id="askVoiceBar">
-      <div class="voice-ai-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 5.2L8 14 2 9.2h7.6z"/></svg>
-      </div>
-      <div class="voice-text-area">
-        <span class="voice-transcribing">发送我的个人介绍<span class="voice-cursor"></span></span>
-      </div>
-      <div class="voice-wave">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-    </div>
     <div class="keys">
       <div class="k punc"><span>，</span></div>
       <div class="k"><span>@</span></div>
@@ -1105,6 +1204,18 @@
       <li>联想/解码：候选栏出现<span class="tip-key">AI增强结果</span></li>
       <li>推荐智能体：光球旁<span class="tip-key">展开</span>智能体卡片</li>
       <li>直接生成：弹出<span class="tip-key">生成结果卡片</span></li>
+    </ul>
+  </div>
+
+  <div class="tips-divider"></div>
+
+  <div class="tips-section">
+    <h3>智能提醒（左侧切换）</h3>
+    <ul>
+      <li>切换到「添加日程」场景</li>
+      <li><span class="tip-key">长按</span>光球进行语音输入，松手后自动创建日程</li>
+      <li>工具栏中弹出<span class="tip-key">已添加日程</span>确认气泡</li>
+      <li>点击「日程提醒」按钮，查看<span class="tip-key">日程提醒</span>通知气泡</li>
     </ul>
   </div>
 </div>
@@ -1305,7 +1416,8 @@ function setupGesture(container, { pageRef, onLongPress }) {
         || e.target.closest('.toolbar-ai-btn') || e.target.closest('.tb-opt')
         || e.target.closest('.tb-rec-close') || e.target.closest('.tb-rec-inner')
         || e.target.closest('.agent-chip') || e.target.closest('.agent-chip-more')
-        || e.target.closest('.agent-rec-close') || e.target.closest('.candidate-bar')) return;
+        || e.target.closest('.agent-rec-close') || e.target.closest('.candidate-bar')
+        || e.target.closest('.ct-wrap[data-id]') || e.target.closest('.tb-reminder')) return;
     state.dragging = true;
     state.swiping = false;
     state.startX = e.clientX;
@@ -1384,7 +1496,11 @@ const ctPageRef = { value: 0 };
 // ===== Main toolbar =====
 function renderToolbar() {
   const tb = document.getElementById('toolbar');
+  const preservedAskBar = tb.querySelector('#askInputBar');
+  const preservedVoiceBar = tb.querySelector('#askVoiceBar');
   tb.innerHTML = '';
+  if (preservedAskBar) tb.appendChild(preservedAskBar);
+  if (preservedVoiceBar) tb.appendChild(preservedVoiceBar);
 
   setupGesture(tb, { pageRef: tbPageRef, onLongPress: openCustomize });
 
@@ -1466,29 +1582,60 @@ function renderCtToolbar() {
   initCtDragSort(ct);
 }
 
+function renderCtToolbarFlat(highlightId) {
+  const ct = document.getElementById('ctToolbar');
+  ct.innerHTML = '';
+
+  const allItems = [];
+  selectedIds.forEach(id => {
+    let wrap;
+    if (id === 'askAI') {
+      wrap = document.createElement('div');
+      wrap.className = 'ct-wrap';
+      wrap.dataset.id = 'askAI';
+      wrap.innerHTML = `
+        <div class="toolbar-ai-btn"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 5.2L8 14 2 9.2h7.6z"/></svg></div>`;
+    } else {
+      wrap = buildToolbarItem(id, true);
+      if (wrap) wrap.dataset.id = id;
+    }
+    if (wrap) allItems.push(wrap);
+  });
+  if (allItems.length === 0) return;
+
+  const flat = document.createElement('div');
+  flat.className = 'ct-drag-flat';
+  allItems.forEach(el => flat.appendChild(el));
+  ct.appendChild(flat);
+
+  if (highlightId) {
+    const el = ct.querySelector(`.ct-wrap[data-id="${highlightId}"]`);
+    if (el) el.classList.add('dragging');
+  }
+}
+
+const dragSortBound = new WeakMap();
 function initCtDragSort(ct) {
+  if (dragSortBound.has(ct)) return;
+  dragSortBound.set(ct, true);
+
   let dragId = null;
   let dragEl = null;
   let startX = 0;
   let startY = 0;
   let isDragging = false;
+  let lastTargetId = null;
+  let lastInsertAfter = false;
+  let originalOrder = null;
   const DRAG_THRESHOLD = 8;
 
-  const wraps = () => Array.from(ct.querySelectorAll('.ct-wrap[data-id]'));
-
   function getDropTarget(x, y) {
-    for (const w of wraps()) {
-      if (w === dragEl) continue;
+    for (const w of ct.querySelectorAll('.ct-wrap[data-id]')) {
+      if (w.dataset.id === dragId) continue;
       const r = w.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return w;
     }
     return null;
-  }
-
-  function clearIndicators() {
-    wraps().forEach(w => {
-      w.classList.remove('drag-over-left', 'drag-over-right');
-    });
   }
 
   ct.addEventListener('pointerdown', (e) => {
@@ -1501,6 +1648,9 @@ function initCtDragSort(ct) {
     startX = e.clientX;
     startY = e.clientY;
     isDragging = false;
+    lastTargetId = null;
+    lastInsertAfter = false;
+    originalOrder = [...selectedIds];
   });
 
   ct.addEventListener('pointermove', (e) => {
@@ -1511,52 +1661,55 @@ function initCtDragSort(ct) {
 
     if (!isDragging && (dx > DRAG_THRESHOLD || dy > DRAG_THRESHOLD)) {
       isDragging = true;
-      dragEl.classList.add('dragging');
       ct.setPointerCapture(e.pointerId);
+      renderCtToolbarFlat(dragId);
+      dragEl = ct.querySelector(`.ct-wrap[data-id="${dragId}"]`);
     }
 
     if (!isDragging) return;
 
-    clearIndicators();
     const target = getDropTarget(e.clientX, e.clientY);
-    if (target) {
-      const r = target.getBoundingClientRect();
-      const mid = r.left + r.width / 2;
-      target.classList.add(e.clientX < mid ? 'drag-over-right' : 'drag-over-left');
-    }
+    if (!target) return;
+
+    const r = target.getBoundingClientRect();
+    const mid = r.left + r.width / 2;
+    const insertAfter = e.clientX > mid;
+    const targetId = target.dataset.id;
+
+    if (targetId === lastTargetId && insertAfter === lastInsertAfter) return;
+    lastTargetId = targetId;
+    lastInsertAfter = insertAfter;
+
+    const newOrder = selectedIds.filter(id => id !== dragId);
+    let insertIdx = newOrder.indexOf(targetId);
+    if (insertAfter) insertIdx++;
+    newOrder.splice(insertIdx, 0, dragId);
+    selectedIds = newOrder;
+
+    renderCtToolbarFlat(dragId);
+    dragEl = ct.querySelector(`.ct-wrap[data-id="${dragId}"]`);
   });
 
-  const endDrag = (e) => {
+  ct.addEventListener('pointerup', () => {
     if (!dragId) return;
-
     if (isDragging) {
-      const target = getDropTarget(e.clientX, e.clientY);
-      if (target && target.dataset.id !== dragId) {
-        const fromIdx = selectedIds.indexOf(dragId);
-        let toIdx = selectedIds.indexOf(target.dataset.id);
-        if (fromIdx !== -1 && toIdx !== -1) {
-          const r = target.getBoundingClientRect();
-          const mid = r.left + r.width / 2;
-          selectedIds.splice(fromIdx, 1);
-          toIdx = selectedIds.indexOf(target.dataset.id);
-          if (e.clientX > mid) toIdx++;
-          selectedIds.splice(toIdx, 0, dragId);
-          save();
-          renderCtToolbar();
-          renderToolbar();
-        }
-      }
-      dragEl.classList.remove('dragging');
-      clearIndicators();
+      save();
+      renderCtToolbar();
+      renderToolbar();
     }
+    dragId = null; dragEl = null; isDragging = false;
+    lastTargetId = null; originalOrder = null;
+  });
 
-    dragId = null;
-    dragEl = null;
-    isDragging = false;
-  };
-
-  ct.addEventListener('pointerup', endDrag);
-  ct.addEventListener('pointercancel', endDrag);
+  ct.addEventListener('pointercancel', () => {
+    if (!dragId) return;
+    if (isDragging && originalOrder) {
+      selectedIds = originalOrder;
+    }
+    dragId = null; dragEl = null; isDragging = false;
+    lastTargetId = null; originalOrder = null;
+    renderCtToolbar();
+  });
 }
 
 // ===== Grid =====
@@ -1691,10 +1844,21 @@ function setAskState(newState) {
   const isVoice = newState === 'voice-recording';
   const showDrawer = ['loading', 'result'].includes(newState);
 
-  $toolbar.classList.toggle('tb-hide', !isIdle);
+  const hideToolbar = !isIdle && !isText && !isVoice;
+  $toolbar.classList.toggle('tb-hide', hideToolbar);
+  if (isVoice || isText) { resetReminderState(); }
   $askInputBar.classList.toggle('active', isText);
   $askVoiceBar.classList.toggle('active', isVoice);
   $askOverlay.classList.toggle('active', showDrawer);
+
+  if (isVoice) {
+    const voiceSpan = $askVoiceBar.querySelector('.voice-transcribing');
+    if (voiceSpan) {
+      const rsc = REMINDER_SCENES[currentScene];
+      const txt = rsc ? rsc.voiceText || '' : '发送我的个人介绍';
+      voiceSpan.innerHTML = txt + '<span class="voice-cursor"></span>';
+    }
+  }
 
   if (isText) {
     $askField.value = '磷酸铁锂和三元锂电池哪个好';
@@ -1777,6 +1941,12 @@ function appendAnswer(resp) {
   const ans = document.createElement('div');
   ans.className = 'ask-answer';
   ans.innerHTML = resp.html;
+  ans.addEventListener('click', () => {
+    const text = ans.textContent.trim().replace(/\s+/g, ' ');
+    const short = text.length > 30 ? text.slice(0, 30) + '…' : text;
+    sendToChat(short);
+    setAskState('idle');
+  });
   $askBody.appendChild(ans);
   scrollAskBody();
 }
@@ -1849,6 +2019,12 @@ function endVoiceRecording() {
   if (voiceCancelled) {
     voiceCancelled = false;
     setAskState('idle');
+    return;
+  }
+
+  if (isReminderScene()) {
+    setAskState('idle');
+    setTimeout(() => showReminderBubble('added'), 300);
     return;
   }
 
@@ -1995,6 +2171,7 @@ function switchScene(sceneId) {
 
   applySceneTheme();
   updateChatArea();
+  resetSimInput();
   renderToolbar();
 }
 
@@ -2043,7 +2220,7 @@ function updateChatArea() {
       <div class="tb-search-bar">
         <div class="tb-search-input">
           <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <span>${scene.searchPlaceholder}</span>
+          <span id="tbSearchText">${scene.searchPlaceholder}</span>
         </div>
         <button class="tb-search-btn">搜索</button>
       </div>
@@ -2170,7 +2347,10 @@ renderToolbar = function() {
 
   chip.querySelector('.tb-rec-inner').addEventListener('click', (e) => {
     if (e.target.closest('.tb-rec-close')) return;
-    showToast(`已填入：${scene.recommend}`);
+    sendToChat(scene.recommend);
+    recDismissed = true;
+    chip.classList.remove('active');
+    chip.addEventListener('transitionend', () => chip.remove(), { once: true });
   });
 
   chip.querySelector('.tb-rec-close').addEventListener('click', (e) => {
@@ -2251,6 +2431,103 @@ const AI_KEY_SCENES = {
   },
 };
 
+// ===== Reminder Scenes =====
+const REMINDER_SCENES = {
+  reminder_add: {
+    theme: { appBar: null, statusBg: '#f2f2f7', chatBg: '#f2f2f7', sceneBg: '#f2f2f7' },
+    appBar: {
+      icon: '<path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/>',
+      color: '#22c55e', name: '产品战略组 (14)',
+    },
+    messages: [
+      { dir: 'in', text: '大家下午好，今天下午的战略沟通会改到702会议室了。', avatar: 'PM', avatarColor: '#8b5cf6' },
+      { dir: 'in', text: '收到 👌', avatar: 'Design', avatarColor: '#ec4899' },
+      { dir: 'out', text: '收到，我也正准备过去。' },
+    ],
+    voiceText: '下午两点半提醒我开会',
+    reminderTime: '14:30',
+    reminderEvent: '产品战略沟通会',
+  },
+  reminder_notify: {
+    theme: { appBar: null, statusBg: '#f2f2f7', chatBg: '#f2f2f7', sceneBg: '#f2f2f7' },
+    appBar: {
+      icon: '<path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/>',
+      color: '#22c55e', name: '产品战略组 (14)',
+    },
+    messages: [
+      { dir: 'in', text: '大家下午好，今天下午的战略沟通会改到702会议室了。', avatar: 'PM', avatarColor: '#8b5cf6' },
+      { dir: 'in', text: '收到 👌', avatar: 'Design', avatarColor: '#ec4899' },
+      { dir: 'out', text: '收到，我也正准备过去。' },
+    ],
+    reminderTime: '14:30',
+    reminderEvent: '产品战略沟通会',
+  },
+};
+
+let reminderState = 'idle';
+
+function isReminderScene() {
+  return !!REMINDER_SCENES[currentScene];
+}
+
+function resetReminderState() {
+  reminderState = 'idle';
+  document.querySelectorAll('.tb-reminder').forEach(el => {
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      el.addEventListener('transitionend', () => el.remove(), { once: true });
+      setTimeout(() => el.remove(), 500);
+    } else {
+      el.remove();
+    }
+  });
+}
+
+function showReminderBubble(type) {
+  const sc = REMINDER_SCENES[currentScene] || REMINDER_SCENES.reminder_add;
+  const isAdded = type === 'added';
+  const label = isAdded ? '已添加日程' : '日程提醒';
+  const labelClass = isAdded ? 'added' : 'notify';
+
+  document.querySelectorAll('.tb-reminder').forEach(el => el.remove());
+
+  const tb = document.getElementById('toolbar');
+  const firstPage = tb.querySelector('.tb-page');
+  if (!firstPage) return;
+  const aiBtn = firstPage.querySelector('.toolbar-ai-btn');
+  if (!aiBtn) return;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'tb-reminder';
+  bubble.innerHTML = `
+    <div class="tb-reminder-inner">
+      <span class="tb-reminder-label ${labelClass}">${label}</span>
+      <span class="tb-reminder-text">${sc.reminderTime} ${sc.reminderEvent}</span>
+      <button class="tb-reminder-close"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="tb-reminder-actions">
+      <button class="tb-reminder-act cal"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg></button>
+      <button class="tb-reminder-act more"><svg viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
+    </div>`;
+
+  aiBtn.after(bubble);
+  requestAnimationFrame(() => requestAnimationFrame(() => bubble.classList.add('active')));
+  reminderState = type;
+
+  bubble.querySelector('.tb-reminder-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetReminderState();
+  });
+  bubble.querySelector('.tb-reminder-act.cal').addEventListener('click', (e) => {
+    e.stopPropagation();
+    showToast('打开日历');
+  });
+  bubble.querySelector('.tb-reminder-act.more').addEventListener('click', (e) => {
+    e.stopPropagation();
+    showToast('更多选项');
+  });
+}
+
 // ===== AI Key Logic =====
 let aiKeyTriggered = false;
 const $candidateBar = document.getElementById('candidateBar');
@@ -2271,15 +2548,65 @@ function resetAIKeyState() {
 
 function commitToInput(text) {
   const inputEl = document.getElementById('aiSceneInput');
-  if (!inputEl) return;
-  const cursor = inputEl.querySelector('.ai-cursor');
-  if (cursor) cursor.remove();
-  inputEl.textContent = text;
-  const c = document.createElement('span');
-  c.className = 'ai-cursor';
-  c.style.cssText = 'display:inline-block;width:2px;height:16px;background:#7c3aed;animation:blink 1s infinite;vertical-align:middle;margin-left:2px';
-  inputEl.appendChild(c);
-  showToast(`已上屏：${text}`);
+  if (inputEl) {
+    const cursor = inputEl.querySelector('.ai-cursor');
+    const existing = inputEl.textContent.replace(/\s/g, '');
+    if (cursor) cursor.remove();
+    inputEl.textContent = existing + text;
+    const c = document.createElement('span');
+    c.className = 'ai-cursor';
+    c.style.cssText = 'display:inline-block;width:2px;height:16px;background:#7c3aed;animation:blink 1s infinite;vertical-align:middle;margin-left:2px';
+    inputEl.appendChild(c);
+  }
+  sendToChat(text, true);
+}
+
+function resetSimInput(prefill) {
+  const box = document.getElementById('simInputBox');
+  if (!box) return;
+  box.classList.remove('highlight');
+  if (prefill) {
+    box.innerHTML = '';
+    box.appendChild(document.createTextNode(prefill));
+    const c = document.createElement('span');
+    c.className = 'sim-cursor';
+    box.appendChild(c);
+  } else {
+    box.innerHTML = '<span class="sim-placeholder">输入消息...</span><span class="sim-cursor"></span>';
+  }
+}
+
+function sendToChat(text, append) {
+  const tbSearch = document.getElementById('tbSearchText');
+  if (tbSearch && currentScene === 'ecommerce') {
+    tbSearch.textContent = text;
+    tbSearch.style.color = '#1a1a1a';
+    showToast('已上屏');
+    return;
+  }
+
+  const box = document.getElementById('simInputBox');
+  if (!box) return;
+  const placeholder = box.querySelector('.sim-placeholder');
+  if (placeholder) placeholder.remove();
+  let cursor = box.querySelector('.sim-cursor');
+  if (!cursor) {
+    cursor = document.createElement('span');
+    cursor.className = 'sim-cursor';
+    box.appendChild(cursor);
+  }
+  if (append) {
+    cursor.insertAdjacentText('beforebegin', text);
+  } else {
+    const oldCursor = box.querySelector('.sim-cursor');
+    box.textContent = '';
+    box.appendChild(document.createTextNode(text));
+    box.appendChild(oldCursor || cursor);
+  }
+  box.classList.remove('highlight');
+  void box.offsetWidth;
+  box.classList.add('highlight');
+  showToast('已上屏');
 }
 
 function showCandidateBarDefault(sc) {
@@ -2378,7 +2705,7 @@ function showAIKeyResult() {
     requestAnimationFrame(() => requestAnimationFrame(() => $aiGenCard.classList.add('active')));
 
     $aiGenCard.querySelector('.gen-text').addEventListener('click', () => {
-      showToast('已上屏');
+      sendToChat(result.text);
       resetAIKeyState();
     });
     $aiGenCard.querySelector('.gen-close').addEventListener('click', () => {
@@ -2397,6 +2724,64 @@ document.addEventListener('click', (e) => {
 const _origSwitchScene = switchScene;
 switchScene = function(sceneId) {
   resetAIKeyState();
+  resetReminderState();
+
+  if (REMINDER_SCENES[sceneId]) {
+    currentScene = sceneId;
+    recDismissed = false;
+
+    document.querySelectorAll('.scene-tag').forEach(t => {
+      t.classList.toggle('active', t.dataset.scene === sceneId);
+    });
+
+    const sc = REMINDER_SCENES[sceneId];
+    const th = sc.theme;
+    const statusBar = document.querySelector('.status-bar');
+    const chatArea = document.getElementById('chatArea');
+    const sceneBar = document.getElementById('sceneBar');
+    const appTitle = document.getElementById('appTitleBar');
+
+    statusBar.style.background = th.statusBg;
+    chatArea.style.background = th.chatBg;
+    sceneBar.style.background = th.sceneBg;
+    statusBar.querySelector('.status-time').style.color = '#1a1a1a';
+    statusBar.querySelectorAll('.status-icons svg').forEach(s => s.style.fill = '#1a1a1a');
+
+    if (sc.appBar) {
+      appTitle.classList.add('active');
+      appTitle.style.background = th.chatBg;
+      appTitle.innerHTML = `
+        <div class="app-icon" style="background:${sc.appBar.color}"><svg viewBox="0 0 24 24" style="fill:#fff">${sc.appBar.icon}</svg></div>
+        <span class="app-name" style="color:#1a1a1a">${sc.appBar.name}</span>`;
+    } else {
+      appTitle.classList.remove('active');
+      appTitle.innerHTML = '';
+    }
+
+    chatArea.style.padding = '10px 16px 16px';
+    chatArea.innerHTML = '';
+    sc.messages.forEach(msg => {
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + msg.dir;
+      if (msg.dir === 'in') {
+        const avatarHtml = msg.avatar
+          ? `<div class="avatar" style="background:linear-gradient(135deg,${msg.avatarColor},${msg.avatarColor}88);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">${msg.avatar}</div>`
+          : `<div class="avatar"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
+        row.innerHTML = `${avatarHtml}<div class="bubble in">${msg.text}</div>`;
+      } else {
+        row.innerHTML = `<div class="bubble out" style="background:#56d958;color:#1a1a1a;border-radius:16px 16px 4px 16px">${msg.text}</div>`;
+      }
+      chatArea.appendChild(row);
+    });
+
+    resetSimInput();
+    renderToolbar();
+
+    if (sceneId === 'reminder_notify') {
+      showReminderBubble('notify');
+    }
+    return;
+  }
 
   if (AI_KEY_SCENES[sceneId]) {
     currentScene = sceneId;
@@ -2440,17 +2825,8 @@ switchScene = function(sceneId) {
       chatArea.appendChild(row);
     });
 
-    // Show input preview with pre-filled text
-    const inputRow = document.createElement('div');
-    inputRow.className = 'msg-row';
-    inputRow.style.cssText = 'justify-content:center; margin-top:auto; padding-top:10px;';
-    inputRow.innerHTML = `
-      <div style="display:flex;align-items:center;background:#fff;border-radius:22px;padding:8px 14px;width:100%;box-shadow:0 1px 4px rgba(0,0,0,.08);gap:8px">
-        <svg style="width:20px;height:20px;fill:#9ca3af;flex-shrink:0" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/></svg>
-        <span id="aiSceneInput" style="flex:1;font-size:15px;color:#1a1a1a">${sc.inputText}<span class="ai-cursor" style="display:inline-block;width:2px;height:16px;background:#7c3aed;animation:blink 1s infinite;vertical-align:middle;margin-left:2px"></span></span>
-        <svg style="width:20px;height:20px;fill:#9ca3af" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
-      </div>`;
-    chatArea.appendChild(inputRow);
+    // Sync simInputBox with pre-filled text
+    resetSimInput(sc.inputText);
 
     renderToolbar();
 
