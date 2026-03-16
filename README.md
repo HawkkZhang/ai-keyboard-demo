@@ -2,7 +2,7 @@
 
 > **在线体验：** <https://hawkkzhang.github.io/ai-keyboard-demo/>
 
-面向年轻用户（18-30 岁）的 AI 增强输入法交互原型。产品主张"每个人的 AI 键盘"，核心差异化在于**个性化定制能力**——不仅是装扮维度，更是键盘功能的自定义能力。
+面向年轻用户（18-30 岁）的 AI 增强输入法交互原型。产品主张「每个人的 AI 键盘」，核心差异化在于**个性化定制能力**——不仅是装扮维度，更是键盘功能的自定义能力。
 
 本仓库是一个**纯前端单页 Demo**，用于演示产品的关键交互概念，不涉及后端服务或真实 AI 模型。
 
@@ -10,13 +10,13 @@
 
 ## 项目背景
 
-### 产品架构："三纵两横"
+### 产品架构（与 docs/specs 一致）
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │              个性化与定制化（横切层）                    │
 │   AI服务组件化 · 工具栏自定义 · 场景智能推荐            │
-│   AI助手与装扮系统 · 语音后处理定制                     │
+│   AI助手与装扮系统                                     │
 ├───────────────┬───────────────┬─────────────────────┤
 │  前端交互能力   │   模型能力     │     输入功能         │
 │ · AI键交互     │ · 端云协同模型  │ · 智能联想与补全      │
@@ -24,13 +24,10 @@
 │ · 问AI界面     │ · 智能体调度   │ · 个人信息快速调用    │
 │ · 结果展示编辑  │ · 场景意图识别  │ · 智能提醒          │
 │ · 场景推荐UI   │ · 信息提取     │                     │
-├───────────────┴───────────────┴─────────────────────┤
-│              基础设施（横切层）                         │
-│   配置管理 · 数据分析                                  │
-└─────────────────────────────────────────────────────┘
+└───────────────┴───────────────┴─────────────────────┘
 ```
 
-合计 21 个功能模块。Demo 侧重演示**个性化与定制化**横切层和**前端交互能力**纵向维度。
+合计 21 个功能模块，按四个工作组组织：前端交互（6）、模型能力（5）、输入能力（6）、装扮能力（4）。Demo 侧重演示**个性化与定制化**横切层和**前端交互能力**纵向维度。
 
 ### Demo 演示的功能范围
 
@@ -49,22 +46,22 @@
 
 ```
 AIkeyboardNew/
-├── index.html                  # 核心 Demo 文件（~2850行，HTML+CSS+JS 全内联）
+├── index.html                  # 核心 Demo 文件（~2850 行，HTML+CSS+JS 全内联）
 ├── CLAUDE.md                   # AI 编码助手上下文指引
 ├── README.md                   # 本文件
 ├── AI键盘目标人群及产品功能规划.pdf  # 产品规划原始文档（PDF）
-├── 项目需求文档.md               # 21 个模块的详细需求清单（含 checkbox）
+├── 项目需求文档.md               # 21 模块需求清单（按工作组，与 specs 一致）
 └── docs/
+    ├── 项目启动会.md             # 产品定位、品牌、四个工作组、里程碑
     ├── plans/
-    └── specs/                    # 按 PM 维度拆解的功能描述
-        ├── 2026-03-06-ai-keyboard-feature-breakdown-design.md  # 功能拆解设计
-        ├── 2026-03-06-ai-keyboard-implementation-plan.md       # 实施计划
-        └── 2026-03-06-ai-key-demo-design.md                   # AI键 Demo 设计
-    └── specs/                                                  # 按 PM 维度拆解的功能描述
-        ├── pm-a-frontend-interaction.md   # 前端交互（9 模块）
-        ├── pm-b-model-capabilities.md     # 模型能力（6 模块）
-        ├── pm-c-input-capabilities.md     # 输入能力（4 模块）
-        └── pm-d-appearance-system.md      # 装扮能力（4 模块）
+    │   ├── 2026-03-06-ai-keyboard-feature-breakdown-design.md  # 功能架构设计
+    │   └── 2026-03-06-ai-key-demo-design.md                     # AI 键 Demo 设计
+    └── specs/                    # 按工作组的详细功能描述
+        ├── pm-a-frontend-interaction.md   # 前端交互（6 模块）
+        ├── pm-b-model-capabilities.md     # 模型能力（5 模块）
+        ├── pm-c-input-capabilities.md     # 输入能力（6 模块）
+        ├── pm-d-appearance-system.md      # 装扮能力（4 模块）
+        └── pm-ui-ux-design-scope.md        # UI/交互设计参与范围
 ```
 
 ### 各文件说明
@@ -76,7 +73,7 @@ AIkeyboardNew/
 | 行范围（约） | 内容 | 说明 |
 |-------------|------|------|
 | 1-1000 | CSS 样式 | 手机框架、聊天 UI、键盘布局、工具栏、定制面板、问 AI（输入/语音/结果抽屉）、候选栏、生成卡片、场景推荐条、提醒气泡、提示面板 |
-| 1000-1220 | HTML 结构 | 手机框架（状态栏→App栏→聊天区→模拟输入框→键盘区→工具栏→按键）、场景侧边栏、功能提示面板 |
+| 1000-1220 | HTML 结构 | 手机框架（状态栏→App 栏→聊天区→模拟输入框→键盘区→工具栏→按键）、场景侧边栏、功能提示面板 |
 | 1220-1500 | JS：数据与工具栏 | `TOOLS` 工具定义、`selectedIds`/`sizeConfig` 配置管理、`renderToolbar()`/`renderCtToolbar()` 渲染逻辑、拖拽排序 |
 | 1500-1700 | JS：定制面板 | `openCustomize()`/`closeCustomize()` 定制模式、工具网格渲染、添加/移除/大小切换 |
 | 1700-1900 | JS：手势与问 AI | `setupGesture()` 统一手势管理、`setAskState()` 状态机、语音录制模拟 |
@@ -119,19 +116,28 @@ AIkeyboardNew/
 
 #### `项目需求文档.md`
 
-从 PDF 转化而来的结构化需求文档，按模块列出所有功能点（含 checkbox 跟踪状态）。覆盖：
-- 前端交互能力（工具栏、AI 键、问 AI、场景推荐、结果展示）
-- 模型能力（端云协同、Agent 路由、智能体调度、场景识别、信息提取）
-- 输入功能（联想补全、语音增强、个人信息、智能提醒）
-- 个性化与基础设施
+按四个工作组组织的需求清单，与 `docs/specs/pm-a~pm-d` 及 `docs/项目启动会.md` 一一对应。含 21 模块的 checklist、模块依赖关系。
+
+#### `docs/项目启动会.md`
+
+产品与品牌定位、产品架构、四个工作组分工、里程碑、Demo 现状、团队沟通机制。
+
+#### `docs/specs/` — 按工作组的详细功能描述
+
+| 文件 | 内容 |
+|------|------|
+| `pm-a-frontend-interaction.md` | 前端交互（6 模块）：AI 服务组件化、工具栏自定义、场景推荐 UI、AI 键、智能体使用、问 AI |
+| `pm-b-model-capabilities.md` | 模型能力（5 模块）：主 Agent 路由、智能体调度、信息提取、场景推荐策略、装扮性格与模型联动 |
+| `pm-c-input-capabilities.md` | 输入能力（6 模块）：端云协同、场景识别、智能联想、语音增强、个人信息、智能提醒 |
+| `pm-d-appearance-system.md` | 装扮能力（4 模块）：AI 助手装扮、形象定制、性格定制、键盘皮肤 |
+| `pm-ui-ux-design-scope.md` | UI/交互设计参与范围（从四维度提炼） |
 
 #### `docs/plans/` — 设计文档
 
 | 文件 | 内容 |
 |------|------|
-| `ai-keyboard-feature-breakdown-design.md` | 功能拆解设计——按"三纵两横"架构拆解 21 个模块，每个模块有功能描述、涉及维度、关键子功能 |
-| `ai-keyboard-implementation-plan.md` | 实施计划——每个模块的子任务 checklist，含优先级和依赖关系 |
-| `ai-key-demo-design.md` | AI 键 Demo 交互设计——四种场景（联想/解码/智能体/生成）的具体交互流程和 UI 组件规格 |
+| `2026-03-06-ai-keyboard-feature-breakdown-design.md` | 功能架构设计——三纵两横架构图、涉及维度、模块依赖 |
+| `2026-03-06-ai-key-demo-design.md` | AI 键 Demo 交互设计——四种场景（联想/解码/智能体/生成）的交互流程和 UI 规格 |
 
 ---
 
@@ -146,9 +152,13 @@ xdg-open index.html    # Linux
 
 或访问在线版本：<https://hawkkzhang.github.io/ai-keyboard-demo/>
 
+---
+
 ## 部署
 
 项目通过 GitHub Pages 部署。更新方式：将 `index.html` 内容通过 GitHub API 推送到 [HawkkZhang/ai-keyboard-demo](https://github.com/HawkkZhang/ai-keyboard-demo) 仓库的 `main` 分支。
+
+---
 
 ## 技术栈
 
@@ -156,6 +166,8 @@ xdg-open index.html    # Linux
 - CSS：Flexbox 布局、CSS 动画（`@keyframes`）、`transition` 过渡、`linear-gradient` 主题
 - JS：原生 DOM 操作、Pointer Events 手势管理、`localStorage` 配置持久化
 - 所有内容内联在单个 HTML 文件中，便于分享和部署
+
+---
 
 ## 语言约定
 

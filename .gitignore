@@ -1,0 +1,5 @@
+# 本地配置与技能
+.agents/
+.claude/
+.cursor/
+skills-lock.json
