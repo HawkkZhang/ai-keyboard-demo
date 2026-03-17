@@ -1,6 +1,6 @@
 # AI 键盘 Demo
 
-> **在线体验：** <https://hawkkzhang.github.io/ai-keyboard-demo/>
+> **在线体验：** <https://ai-keyboard-demo.vercel.app/>
 
 面向年轻用户（18-30 岁）的 AI 增强输入法交互原型。产品主张「每个人的 AI 键盘」，核心差异化在于**个性化定制能力**——不仅是装扮维度，更是键盘功能的自定义能力。
 
@@ -129,7 +129,7 @@ AIkeyboardNew/
 | `pm-a-frontend-interaction.md` | 前端交互（6 模块）：AI 服务组件化、工具栏自定义、场景推荐 UI、AI 键、智能体使用、问 AI |
 | `pm-b-model-capabilities.md` | 模型能力（5 模块）：主 Agent 路由、智能体调度、信息提取、场景推荐策略、装扮性格与模型联动 |
 | `pm-c-input-capabilities.md` | 输入能力（6 模块）：端云协同、场景识别、智能联想、语音增强、个人信息、智能提醒 |
-| `pm-d-appearance-system.md` | 装扮能力（4 模块）：AI 助手装扮、形象定制、性格定制、键盘皮肤 |
+| `pm-d-appearance-system.md` | 装扮能力（2 模块）：AI 助手与装扮系统（换装，性格与形象绑定）、键盘皮肤 |
 | `pm-ui-ux-design-scope.md` | UI/交互设计参与范围（从四维度提炼） |
 
 #### `docs/plans/` — 设计文档
@@ -150,13 +150,13 @@ start index.html       # Windows
 xdg-open index.html    # Linux
 ```
 
-或访问在线版本：<https://hawkkzhang.github.io/ai-keyboard-demo/>
+或访问在线版本：<https://ai-keyboard-demo.vercel.app/>
 
 ---
 
 ## 部署
 
-项目通过 GitHub Pages 部署。更新方式：将 `index.html` 内容通过 GitHub API 推送到 [HawkkZhang/ai-keyboard-demo](https://github.com/HawkkZhang/ai-keyboard-demo) 仓库的 `main` 分支。
+Demo 通过 [Vercel](https://vercel.com) 部署。推送代码到 [HawkkZhang/ai-keyboard-demo](https://github.com/HawkkZhang/ai-keyboard-demo) 仓库后，Vercel 会自动重新部署。
 
 ---
 

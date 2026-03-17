@@ -1,5 +1,11 @@
 # 本地配置与技能
+.agent/
 .agents/
 .claude/
 .cursor/
+.trae/
 skills-lock.json
+
+# BMad 工具输出与配置（不提交到 GitHub）
+_bmad/
+_bmad-output/
